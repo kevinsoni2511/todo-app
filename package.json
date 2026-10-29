@@ -1,0 +1,9 @@
+{
+  "name": "todo-app-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Professional Full-Stack Todo Application - Root Monorepo",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build"
+  }
+}
