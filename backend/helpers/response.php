@@ -10,8 +10,17 @@
  * Applies required CORS headers for cross-origin requests from the React frontend.
  */
 function setCorsHeaders(): void {
-    // Exact permitted origin (Frontend dev server)
-    header("Access-Control-Allow-Origin: http://localhost:5173");
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    $allowedOrigins = [
+        'http://localhost:5173',
+        'https://todo-app-by-kevin.netlify.app'
+    ];
+
+    if (in_array($origin, $allowedOrigins, true)) {
+        header("Access-Control-Allow-Origin: {$origin}");
+    } else {
+        header("Access-Control-Allow-Origin: http://localhost:5173");
+    }
     
     // Required to allow PHP session cookies in cross-origin requests
     header("Access-Control-Allow-Credentials: true");
