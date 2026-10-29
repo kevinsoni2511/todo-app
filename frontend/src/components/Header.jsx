@@ -4,7 +4,7 @@ import React from 'react';
  * Header Component
  * Displays app branding, live API status badge, test API trigger, and user profile information.
  */
-export default function Header({ user, onLogout, apiStatus, onTestApi }) {
+export default function Header({ user, onLogout, apiStatus, onTestApi, onConfigureBackend }) {
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'short',
     month: 'short',
@@ -24,14 +24,16 @@ export default function Header({ user, onLogout, apiStatus, onTestApi }) {
       </div>
 
       <div className="header-actions">
-        {/* Backend API Health Badge */}
+        {/* Backend API Health Badge (Clickable to reconfigure) */}
         {apiStatus && (
           <div
-            className={`api-status-badge ${apiStatus.connected ? 'online' : 'offline'}`}
-            title={apiStatus.message}
+            onClick={onConfigureBackend}
+            className={`api-status-badge ${apiStatus.connected ? 'online' : 'offline'} clickable`}
+            title={`${apiStatus.message} — Click to configure backend connection`}
+            style={{ cursor: 'pointer' }}
           >
             <span className="status-dot"></span>
-            <span>{apiStatus.connected ? 'PHP API: Connected' : 'PHP API: Offline'}</span>
+            <span>{apiStatus.connected ? 'PHP API: Connected' : 'PHP API: Offline ⚙️'}</span>
           </div>
         )}
 

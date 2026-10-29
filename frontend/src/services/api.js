@@ -10,8 +10,31 @@
  * - Comprehensive HTTP status code and network error handling
  */
 
-// Configurable API URL for Netlify production vs localhost development
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost/todo-app/backend';
+// Dynamic API URL for Localhost, Netlify, and Cloud Tunnels
+export const getApiBaseUrl = () => {
+  const stored = typeof window !== 'undefined' ? localStorage.getItem('taskmaster_api_url') : null;
+  if (stored) return stored.replace(/\/$/, '');
+
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '');
+  }
+
+  // If running live on Netlify, connect via default public tunnel
+  if (typeof window !== 'undefined' && window.location.hostname.includes('netlify.app')) {
+    return 'https://big-animals-trade.loca.lt/todo-app/backend';
+  }
+
+  return 'http://localhost/todo-app/backend';
+};
+
+export const setApiBaseUrl = (url) => {
+  if (typeof window === 'undefined') return;
+  if (url && url.trim()) {
+    localStorage.setItem('taskmaster_api_url', url.trim().replace(/\/$/, ''));
+  } else {
+    localStorage.removeItem('taskmaster_api_url');
+  }
+};
 
 // In-memory CSRF token store (never stored in localStorage for maximum security)
 let currentCsrfToken = null;
@@ -30,12 +53,14 @@ export const getCsrfToken = () => currentCsrfToken;
  * @returns {Promise<any>} Parsed response data
  */
 export async function apiRequest(endpoint, options = {}) {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const baseUrl = getApiBaseUrl();
+  const url = `${baseUrl}${endpoint}`;
   const method = (options.method || 'GET').toUpperCase();
 
   const headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
+    'Bypass-Tunnel-Reminder': 'true', // Seamlessly bypass tunnel prompt screens
     ...options.headers,
   };
 

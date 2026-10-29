@@ -11,15 +11,26 @@
  */
 function setCorsHeaders(): void {
     $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-    $allowedOrigins = [
-        'http://localhost:5173',
-        'https://todo-app-by-kevin.netlify.app'
-    ];
+    
+    // Whitelist trusted origins: Netlify, Localtunnel, Ngrok, and localhost
+    $isAllowed = false;
+    if (!empty($origin)) {
+        if (
+            str_contains($origin, 'localhost') ||
+            str_contains($origin, '127.0.0.1') ||
+            str_ends_with($origin, '.netlify.app') ||
+            str_ends_with($origin, '.loca.lt') ||
+            str_ends_with($origin, '.ngrok-free.app') ||
+            str_ends_with($origin, '.ngrok.io')
+        ) {
+            $isAllowed = true;
+        }
+    }
 
-    if (in_array($origin, $allowedOrigins, true)) {
+    if ($isAllowed) {
         header("Access-Control-Allow-Origin: {$origin}");
     } else {
-        header("Access-Control-Allow-Origin: http://localhost:5173");
+        header("Access-Control-Allow-Origin: https://todo-app-by-kevin.netlify.app");
     }
     
     // Required to allow PHP session cookies in cross-origin requests
@@ -29,7 +40,7 @@ function setCorsHeaders(): void {
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     
     // Permitted HTTP headers
-    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-CSRF-Token");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-CSRF-Token, Bypass-Tunnel-Reminder");
 
     // Automatically handle pre-flight OPTIONS request
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

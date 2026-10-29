@@ -8,6 +8,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Toast from './components/Toast';
 import ConfirmModal from './components/ConfirmModal';
+import BackendModal from './components/BackendModal';
 import useAuth from './hooks/useAuth';
 import api from './services/api';
 import './App.css';
@@ -51,6 +52,7 @@ export default function App() {
 
   // API Status state (checks connection to PHP backend)
   const [apiStatus, setApiStatus] = useState({ connected: false, message: 'Connecting to PHP API...' });
+  const [backendModalOpen, setBackendModalOpen] = useState(false);
 
   // State for Editing Task
   const [editingTodo, setEditingTodo] = useState(null);
@@ -275,6 +277,16 @@ export default function App() {
           user={null}
           apiStatus={apiStatus}
           onTestApi={handleTestApi}
+          onConfigureBackend={() => setBackendModalOpen(true)}
+        />
+
+        <BackendModal
+          isOpen={backendModalOpen}
+          onClose={() => setBackendModalOpen(false)}
+          onSave={() => {
+            checkApiHealth();
+            checkAuth();
+          }}
         />
 
         {authView === 'login' ? (
@@ -326,6 +338,16 @@ export default function App() {
         onCancel={closeConfirmModal}
       />
 
+      {/* Backend API Connection Configuration Modal */}
+      <BackendModal
+        isOpen={backendModalOpen}
+        onClose={() => setBackendModalOpen(false)}
+        onSave={() => {
+          checkApiHealth();
+          checkAuth();
+        }}
+      />
+
       {/* Header with Live User Profile and API Status */}
       <Header
         user={user}
@@ -335,6 +357,7 @@ export default function App() {
         }}
         apiStatus={apiStatus}
         onTestApi={handleTestApi}
+        onConfigureBackend={() => setBackendModalOpen(true)}
       />
 
       {/* Dashboard Statistics (Database Aggregates) */}

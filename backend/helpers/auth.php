@@ -14,13 +14,17 @@ require_once __DIR__ . '/response.php';
  */
 function initSession(): void {
     if (session_status() === PHP_SESSION_NONE) {
+        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+            || (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on');
+
         session_set_cookie_params([
             'lifetime' => 86400 * 7, // 7 days session
             'path' => '/',
             'domain' => '',
-            'secure' => false, // false for HTTP local development, true for production HTTPS
-            'httponly' => true, // Prevents malicious JavaScript from accessing the session cookie (anti-XSS)
-            'samesite' => 'Lax' // Allows session cookie across localhost ports (5173 -> 80)
+            'secure' => $isHttps, // true for HTTPS tunnels and production
+            'httponly' => true, // Prevents malicious JavaScript from accessing session cookie
+            'samesite' => $isHttps ? 'None' : 'Lax' // 'None' is required for cross-domain HTTPS requests (Netlify -> Backend)
         ]);
 
         session_start();
