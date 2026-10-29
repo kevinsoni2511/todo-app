@@ -14,7 +14,7 @@ import './App.css';
 
 export default function App() {
   // Authentication Hook (reads active PHP session)
-  const { user, loading: authLoading, login, register, logout } = useAuth();
+  const { user, loading: authLoading, login, register, loginWithGoogle, logout } = useAuth();
   const [authView, setAuthView] = useState('login'); // 'login' | 'register'
 
   // Live Database Todos State
@@ -284,6 +284,11 @@ export default function App() {
               if (res.success) showToast('Welcome back! Signed in successfully.', 'success');
               return res;
             }}
+            onGoogleLogin={async (credential, profileData) => {
+              const res = await loginWithGoogle(credential, profileData);
+              if (res.success) showToast(`Welcome, ${res.user?.name || 'User'}! Signed in with Google.`, 'success');
+              return res;
+            }}
             onSwitchToRegister={() => setAuthView('register')}
           />
         ) : (
@@ -291,6 +296,11 @@ export default function App() {
             onRegister={async (name, email, pwd, confirmPwd) => {
               const res = await register(name, email, pwd, confirmPwd);
               if (res.success) showToast('Account created! Welcome to TaskMaster.', 'success');
+              return res;
+            }}
+            onGoogleLogin={async (credential, profileData) => {
+              const res = await loginWithGoogle(credential, profileData);
+              if (res.success) showToast(`Welcome, ${res.user?.name || 'User'}! Connected with Google.`, 'success');
               return res;
             }}
             onSwitchToLogin={() => setAuthView('login')}

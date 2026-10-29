@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import GoogleSignInButton from './GoogleSignInButton';
 
 /**
  * Register Component
  * Provides user registration form with name, email, password, and confirm password fields.
  */
-export default function Register({ onRegister, onSwitchToLogin }) {
+export default function Register({ onRegister, onGoogleLogin, onSwitchToLogin }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,6 +41,15 @@ export default function Register({ onRegister, onSwitchToLogin }) {
     }
   };
 
+  const handleGoogleAuth = async (credential, profileData) => {
+    if (!onGoogleLogin) return;
+    setError('');
+    const result = await onGoogleLogin(credential, profileData);
+    if (!result.success) {
+      setError(result.message || 'Google Sign-in failed.');
+    }
+  };
+
   return (
     <div className="auth-card-container">
       <div className="auth-card">
@@ -50,6 +60,20 @@ export default function Register({ onRegister, onSwitchToLogin }) {
         </div>
 
         {error && <div className="form-error-banner">{error}</div>}
+
+        {onGoogleLogin && (
+          <>
+            <GoogleSignInButton
+              onGoogleSuccess={handleGoogleAuth}
+              disabled={submitting}
+              text="Sign up with Google"
+            />
+
+            <div className="auth-divider">
+              <span>OR REGISTER WITH EMAIL</span>
+            </div>
+          </>
+        )}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">

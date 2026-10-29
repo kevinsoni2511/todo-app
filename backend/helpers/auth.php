@@ -130,7 +130,8 @@ function getAuthenticatedUser(): ?array {
         return [
             'id' => (int)$_SESSION['user_id'],
             'name' => $_SESSION['user_name'] ?? 'User',
-            'email' => $_SESSION['user_email'] ?? ''
+            'email' => $_SESSION['user_email'] ?? '',
+            'avatar' => $_SESSION['user_avatar'] ?? null
         ];
     }
 

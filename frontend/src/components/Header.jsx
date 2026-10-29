@@ -51,7 +51,11 @@ export default function Header({ user, onLogout, apiStatus, onTestApi }) {
         {user && (
           <div className="user-profile">
             <div className="user-avatar">
-              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+              {user.avatar ? (
+                <img src={user.avatar} alt={user.name} className="user-avatar-img" referrerPolicy="no-referrer" />
+              ) : (
+                user.name ? user.name.charAt(0).toUpperCase() : 'U'
+              )}
             </div>
             <div className="user-info">
               <span className="user-name">{user.name}</span>

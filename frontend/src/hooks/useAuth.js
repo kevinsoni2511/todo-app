@@ -72,6 +72,25 @@ export function useAuth() {
     }
   };
 
+  // Google OAuth Login handler
+  const loginWithGoogle = async (credential, profileData = {}) => {
+    setError(null);
+    try {
+      const res = await api.post('/api/auth/google.php', {
+        credential,
+        ...profileData
+      });
+      if (res.success && res.data && res.data.user) {
+        setUser(res.data.user);
+        return { success: true, user: res.data.user };
+      }
+      throw new Error(res.message || 'Google login failed.');
+    } catch (err) {
+      setError(err.message);
+      return { success: false, message: err.message };
+    }
+  };
+
   // Logout handler
   const logout = async () => {
     try {
@@ -90,6 +109,7 @@ export function useAuth() {
     error,
     login,
     register,
+    loginWithGoogle,
     logout,
     checkAuth
   };

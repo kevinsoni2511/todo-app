@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import GoogleSignInButton from './GoogleSignInButton';
 
 /**
  * Login Component
  * Provides clean, modern login form with email & password validation.
  */
-export default function Login({ onLogin, onSwitchToRegister }) {
+export default function Login({ onLogin, onGoogleLogin, onSwitchToRegister }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -28,6 +29,15 @@ export default function Login({ onLogin, onSwitchToRegister }) {
     }
   };
 
+  const handleGoogleAuth = async (credential, profileData) => {
+    if (!onGoogleLogin) return;
+    setError('');
+    const result = await onGoogleLogin(credential, profileData);
+    if (!result.success) {
+      setError(result.message || 'Google Sign-in failed.');
+    }
+  };
+
   return (
     <div className="auth-card-container">
       <div className="auth-card">
@@ -38,6 +48,20 @@ export default function Login({ onLogin, onSwitchToRegister }) {
         </div>
 
         {error && <div className="form-error-banner">{error}</div>}
+
+        {onGoogleLogin && (
+          <>
+            <GoogleSignInButton
+              onGoogleSuccess={handleGoogleAuth}
+              disabled={submitting}
+              text="Continue with Google"
+            />
+
+            <div className="auth-divider">
+              <span>OR CONTINUE WITH EMAIL</span>
+            </div>
+          </>
+        )}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
