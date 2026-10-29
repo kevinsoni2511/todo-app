@@ -10,7 +10,8 @@
  * - Comprehensive HTTP status code and network error handling
  */
 
-const API_BASE_URL = 'http://localhost/todo-app/backend';
+// Configurable API URL for Netlify production vs localhost development
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost/todo-app/backend';
 
 // In-memory CSRF token store (never stored in localStorage for maximum security)
 let currentCsrfToken = null;

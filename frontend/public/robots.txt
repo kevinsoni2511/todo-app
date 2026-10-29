@@ -1,0 +1,8 @@
+# Robots.txt for TaskMaster Pro
+User-agent: *
+Allow: /
+
+# Disallow indexing private API requests if queried directly
+Disallow: /api/
+
+Sitemap: https://taskmaster-pro.netlify.app/sitemap.xml
