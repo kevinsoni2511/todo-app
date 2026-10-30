@@ -1,0 +1,23 @@
+# Render Infrastructure-as-Code Blueprint
+# Automatically creates the Web Service on Render when repo is connected
+
+services:
+  - type: web
+    name: todo-app-backend
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DB_HOST
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_PORT
+        value: "3306"

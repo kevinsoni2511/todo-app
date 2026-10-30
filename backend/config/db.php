@@ -8,15 +8,15 @@
 
 // Application Environment: 'development' displays debug info, 'production' hides internals
 if (!defined('APP_ENV')) {
-    define('APP_ENV', 'development');
+    define('APP_ENV', getenv('APP_ENV') ?: 'development');
 }
 
-// XAMPP Default Database Credentials
-if (!defined('DB_HOST')) define('DB_HOST', 'localhost');
-if (!defined('DB_USER')) define('DB_USER', 'root');
-if (!defined('DB_PASS')) define('DB_PASS', '');
-if (!defined('DB_NAME')) define('DB_NAME', 'todo_app');
-if (!defined('DB_PORT')) define('DB_PORT', 3306);
+// Database Credentials (Supports Render / TiDB / Aiven / Railway or Local XAMPP)
+if (!defined('DB_HOST')) define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+if (!defined('DB_USER')) define('DB_USER', getenv('DB_USER') ?: 'root');
+if (!defined('DB_PASS')) define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
+if (!defined('DB_NAME')) define('DB_NAME', getenv('DB_NAME') ?: 'todo_app');
+if (!defined('DB_PORT')) define('DB_PORT', (int)(getenv('DB_PORT') ?: 3306));
 
 // Enable MySQLi Exception Mode so errors throw mysqli_sql_exception instead of silent warnings
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);

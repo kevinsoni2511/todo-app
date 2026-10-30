@@ -1,45 +1,31 @@
 <?php
 /**
- * Backend API Entry Point & Health Check
+ * Render / Cloud Health Check Endpoint
+ * GET /health.php or GET /index.php
  */
 
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Origin: http://localhost:5173");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
-// Include database connection
+require_once __DIR__ . '/helpers/response.php';
 require_once __DIR__ . '/config/db.php';
 
+setCorsHeaders();
+
+$dbStatus = 'disconnected';
+$error = null;
+
 try {
-    $db = getDBConnection();
-    
-    // Check if tables exist
-    $tablesResult = $db->query("SHOW TABLES LIKE 'todos'");
-    $tablesExist = $tablesResult->num_rows > 0;
-
-    echo json_encode([
-        "success" => true,
-        "message" => "Todo App PHP Backend API is running successfully!",
-        "database" => [
-            "status" => "connected",
-            "name" => DB_NAME,
-            "tables_ready" => $tablesExist,
-            "server_info" => $db->server_info
-        ],
-        "timestamp" => date("Y-m-d H:i:s")
-    ], JSON_PRETTY_PRINT);
-
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
-        "success" => false,
-        "message" => "Server Error: " . $e->getMessage()
-    ], JSON_PRETTY_PRINT);
+    $conn = getDBConnection();
+    if ($conn->ping()) {
+        $dbStatus = 'connected';
+    }
+} catch (Throwable $e) {
+    $error = $e->getMessage();
 }
+
+sendJsonResponse(200, true, "TaskMaster Pro PHP REST API is live!", [
+    "service" => "TaskMaster Pro Backend",
+    "status" => "online",
+    "php_version" => PHP_VERSION,
+    "database" => $dbStatus,
+    "time" => date('Y-m-d H:i:s'),
+    "error" => $error
+]);
