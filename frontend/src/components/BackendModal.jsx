@@ -64,8 +64,12 @@ export default function BackendModal({ isOpen, onClose, onSave }) {
         </div>
 
         <p className="modal-message">
-          Your frontend is running in the cloud (Netlify). To perform login, registration, and save tasks,
+          Your frontend is running on Netlify. To perform login, registration, and save tasks,
           your browser must connect to an active PHP & MySQL backend.
+          <br /><br />
+          <strong>Options:</strong>
+          <br />• <strong>Local Network (Same Wi-Fi):</strong> <code>http://172.20.10.3/todo-app/backend</code>
+          <br />• <strong>Cloud / Production:</strong> Deploy <code>backend/</code> to free PHP hosting (e.g., InfinityFree or Render) and paste URL here.
         </p>
 
         <div className="form-group" style={{ marginBottom: '16px' }}>
